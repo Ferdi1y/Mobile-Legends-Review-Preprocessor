@@ -4,7 +4,7 @@
 
 Proyek ini merupakan implementasi analisis sentimen terhadap review aplikasi Mobile Legends: Bang Bang dari Google Play Store. Sistem ini menggunakan berbagai algoritma machine learning dan deep learning untuk mengklasifikasikan sentimen pengguna ke dalam tiga kategori: Positif, Netral, dan Negatif. Proyek ini dikembangkan sebagai submission untuk kursus Machine Learning Terapan di Dicoding.
 
-Dataset diperoleh melalui web scraping secara mandiri menggunakan library google-play-scraper dengan minimal 3000 sampel data. Analisis sentimen dilakukan dengan membandingkan performa tiga algoritma berbeda: Random Forest, Support Vector Machine (SVM), dan Long Short-Term Memory (LSTM).
+Dataset diperoleh melalui web scraping secara mandiri menggunakan library google-play-scraper dengan minimal 3000 sampel data. Analisis sentimen dilakukan dengan Long Short-Term Memory (LSTM).
 
 ## Fitur Utama
 
