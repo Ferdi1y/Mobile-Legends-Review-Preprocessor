@@ -9,14 +9,14 @@ import pandas as pd
 from datetime import datetime
 import time
 
-def scrape_mlbb_reviews(target_count=10000):
+def scrape_mlbb_reviews(target_count=20000):
     """
     Melakukan scraping review aplikasi Mobile Legends dari Google Play Store
     
     Parameters:
     -----------
     target_count : int
-        Jumlah target review yang ingin diambil (minimal 10000)
+        Jumlah target review yang ingin diambil (minimal 20000)
     
     Returns:
     --------
@@ -83,14 +83,19 @@ def scrape_mlbb_reviews(target_count=10000):
     print("=" * 60)
     
     df = pd.DataFrame(all_reviews)
-    
-    # Pilih kolom yang relevan
-    df_clean = df[['userName', 'score', 'content', 'at', 'reviewCreatedVersion', 
-                   'thumbsUpCount', 'replyContent']].copy()
-    
-    # Rename kolom agar lebih mudah dipahami
-    df_clean.columns = ['nama_pengguna', 'rating', 'review', 'tanggal', 
-                        'versi_app', 'jumlah_like', 'balasan_developer']
+
+    # Pilih kolom yang relevan (termasuk rating/score jika tersedia)
+    if 'score' in df.columns:
+        df_clean = df[['content', 'at', 'score']].copy()
+        df_clean.columns = ['review', 'tanggal', 'rating']
+    elif 'rating' in df.columns:
+        df_clean = df[['content', 'at', 'rating']].copy()
+        df_clean.columns = ['review', 'tanggal', 'rating']
+    else:
+        # Jika tidak ada kolom rating, buat kolom rating dengan nilai NaN
+        df_clean = df[['content', 'at']].copy()
+        df_clean.columns = ['review', 'tanggal']
+        df_clean['rating'] = pd.NA
     
     # Konversi tanggal
     df_clean['tanggal'] = pd.to_datetime(df_clean['tanggal'])
@@ -105,7 +110,11 @@ def scrape_mlbb_reviews(target_count=10000):
     print(f"\nTotal review setelah pembersihan: {len(df_clean)}")
     print(f"Rentang tanggal: {df_clean['tanggal'].min()} - {df_clean['tanggal'].max()}")
     print(f"\nDistribusi Rating:")
-    print(df_clean['rating'].value_counts().sort_index())
+    # Tampilkan distribusi rating jika tersedia
+    if 'rating' in df_clean.columns and df_clean['rating'].notna().any():
+        print(df_clean['rating'].value_counts().sort_index())
+    else:
+        print('Tidak ada data rating yang tersedia.')
     
     return df_clean
 
@@ -129,7 +138,7 @@ def save_to_csv(df, filename='mlbb_reviews.csv'):
 
 if __name__ == "__main__":
     # Scraping review
-    df_reviews = scrape_mlbb_reviews(target_count=10000)
+    df_reviews = scrape_mlbb_reviews(target_count=4000)
     
     # Simpan ke CSV
     save_to_csv(df_reviews, 'mlbb_reviews.csv')
